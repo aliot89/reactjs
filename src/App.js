@@ -40,55 +40,34 @@ async function App() {
       });
     }
   }
-  var checkRemotePermission = function (permissionData) {
-    alert("test");
-    if (permissionData.permission === "default") {
-      // This is a new web service URL and its validity is unknown.
-      console.log("default");
-      window.safari.pushNotification.requestPermission(
-        "https://website.com/",
-        "web.com.website.notify",
-        { uid: "TEST" },
-        checkRemotePermission
+  var p = document.getElementById("foo");
+  p.onclick = function () {
+    // Ensure that the user can receive Safari Push Notifications.
+    if ("safari" in window && "pushNotification" in window.safari) {
+      var permissionData = window.safari.pushNotification.permission(
+        "https://reactjs-sigma-seven.vercel.app"
       );
-    } else if (permissionData.permission === "denied") {
-      // The user said no.
-      console.log("no");
-    } else if (permissionData.permission === "granted") {
-      // The web service URL is a valid push provider, and the user said yes.
-      // permissionData.deviceToken is now available to use.
-      console.log("yes");
+      checkRemotePermission(permissionData);
     }
   };
 
-  if ("safari" in window && "pushNotification" in window.safari) {
-    var permissionData = window.safari.pushNotification.permission(
-      "web.com.website.notify"
-    );
-    checkRemotePermission(permissionData);
-  } else {
-    alert("This feature is only available on Mac OS X safari");
-  }
-  getToken(messaging, {
-    vapidKey:
-      "BNiYast8NllLtbCmjB7tEy1Ja95lcKdr0_Unmz41P96-c5OHtqq1L60fhrlOGY2hW3RQDNdoVoF5MwLHUg2UlnQ",
-  })
-    .then((currentToken) => {
-      if (currentToken) {
-        console.log("current token for client: ", currentToken);
-        // Perform any other neccessary action with the token
-        setToken(currentToken);
-        return currentToken;
-      } else {
-        // Show permission request UI
-        console.log(
-          "No registration token available. Request permission to generate one."
-        );
-      }
-    })
-    .catch((err) => {
-      console.log("An error occurred while retrieving token. ", err);
-    });
+  var checkRemotePermission = function (permissionData) {
+    if (permissionData.permission === "default") {
+      // This is a new web service URL and its validity is unknown.
+      window.safari.pushNotification.requestPermission(
+        "https://reactjs-sigma-seven.vercel.app/", // The web service URL.
+        "web.com.example.domain", // The Website Push ID.
+        {}, // Data that you choose to send to your server to help you identify the user.
+        checkRemotePermission // The callback function.
+      );
+    } else if (permissionData.permission === "denied") {
+      // The user said no.
+    } else if (permissionData.permission === "granted") {
+      // The web service URL is a valid push provider, and the user said yes.
+      // permissionData.deviceToken is now available to use.
+    }
+  };
+
   return (
     <div className="App">
       <header className="App-header">
