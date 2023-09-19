@@ -41,7 +41,7 @@ async function App() {
     }
   };
   if (Notification.permission === "granted") {
-    console.log("allow", result);
+    console.log("allow");
     return true;
   }
   if (!Notification.requestPermission()) {
