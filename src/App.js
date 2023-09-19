@@ -20,25 +20,6 @@ initializeApp(firebaseConfig);
 const messaging = getMessaging();
 async function App() {
   const [token, setToken] = useState("");
-  const notifyMe = () => {
-    if (!("Notification" in window)) {
-      // Check if the browser supports notifications
-      alert("This browser does not support desktop notification");
-    } else if (Notification.permission === "granted") {
-      // Check whether notification permissions have already been granted;
-      // if so, create a notification
-      const notification = new Notification("Hi there!");
-      // …
-    } else if (Notification.permission !== "denied") {
-      // We need to ask the user for permission
-      Notification.requestPermission().then((permission) => {
-        // If the user accepts, let's create a notification
-        if (permission === "granted") {
-          const notification = new Notification("Hi there!");
-        }
-      });
-    }
-  };
 
   getToken(messaging, {
     vapidKey:
@@ -60,6 +41,35 @@ async function App() {
     .catch((err) => {
       console.log("An error occurred while retrieving token. ", err);
     });
+
+  var p = document.getElementById("foo");
+  p.onclick = function () {
+    // Ensure that the user can receive Safari Push Notifications.
+    if ("safari" in window && "pushNotification" in window.safari) {
+      var permissionData = window.safari.pushNotification.permission(
+        "web.com.example.domain"
+      );
+      checkRemotePermission(permissionData);
+    }
+  };
+
+  var checkRemotePermission = function (permissionData) {
+    if (permissionData.permission === "default") {
+      // This is a new web service URL and its validity is unknown.
+      window.safari.pushNotification.requestPermission(
+        "https://reactjs-blond-beta.vercel.app/", // The web service URL.
+        "reactjs-blond-beta.vercel.app", // The Website Push ID.
+        {}, // Data that you choose to send to your server to help you identify the user.
+        checkRemotePermission // The callback function.
+      );
+    } else if (permissionData.permission === "denied") {
+      // The user said no.
+    } else if (permissionData.permission === "granted") {
+      // The web service URL is a valid push provider, and the user said yes.
+      // permissionData.deviceToken is now available to use.
+    }
+  };
+
   return (
     <div className="App">
       <header className="App-header">
@@ -67,6 +77,7 @@ async function App() {
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
+        <h3 id="foo"></h3>
         <a
           className="App-link"
           href={token}
@@ -77,7 +88,6 @@ async function App() {
         </a>
       </header>
       <Notification />
-      <button onClick={notifyMe}>Click me</button>
     </div>
   );
 }
