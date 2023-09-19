@@ -18,22 +18,42 @@ var firebaseConfig = {
 initializeApp(firebaseConfig);
 
 const messaging = getMessaging();
+function requestPermission() {
+  console.log("request permission");
+
+  Notification.requestPermission().then((permission) => {
+    if (permission === "granted") {
+      console.log("FIREBASE CLOUD MESSAGING Notification permission granted.");
+
+      messaging
+        .getToken(messaging, { vapidKey: "<my-key>" })
+        .then((currentToken) => {
+          if (currentToken) {
+            // Send the token to your server and update the UI if necessary
+            // ...
+            console.log("FIREBASE CLOUD MESSAGING currentToken", currentToken);
+          } else {
+            // Show permission request UI
+            console.log(
+              "FIREBASE CLOUD MESSAGING No registration token available. Request permission to generate one."
+            );
+            // ...
+          }
+        })
+        .catch((err) => {
+          console.log(
+            "FIREBASE CLOUD MESSAGING An error occurred while retrieving token. ",
+            err
+          );
+          // ...
+        });
+    }
+  });
+}
+
 function App() {
   const [token, setToken] = useState("");
-  try {
-    Notification.requestPermission().then(() => doSomething());
-  } catch (error) {
-    // Safari doesn't return a promise for requestPermissions and it
-    // throws a TypeError. It takes a callback as the first argument
-    // instead.
-    if (error instanceof TypeError) {
-      Notification.requestPermission(() => {
-        doSomething();
-      });
-    } else {
-      throw error;
-    }
-  }
+  requestPermission();
   getToken(messaging, {
     vapidKey:
       "BNiYast8NllLtbCmjB7tEy1Ja95lcKdr0_Unmz41P96-c5OHtqq1L60fhrlOGY2hW3RQDNdoVoF5MwLHUg2UlnQ",
