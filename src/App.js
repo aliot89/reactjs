@@ -19,12 +19,20 @@ initializeApp(firebaseConfig);
 
 const messaging = getMessaging();
 async function requestPermisson() {
-  let permission = await window.Notification.requestPermission();
-  if (permission === "granted") {
-    alert("Notification permission granted. Requesting for token.");
+  // let permission = await window.Notification.requestPermission();
+  if ("Notification" in window) {
+    window.Notification.requestPermission()
+      .then((permission) => {
+        alert(
+          "Notification permission granted. Requesting for token.",
+          permission
+        );
+      })
+      .catch((error) => {
+        alert(error);
+      });
   } else {
-    alert("Notification permission denied");
-    // Handle denied permission
+    // Thông báo rằng trình duyệt không hỗ trợ thông báo
   }
 }
 function App() {
