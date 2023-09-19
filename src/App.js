@@ -35,27 +35,11 @@ async function App() {
         // If the user accepts, let's create a notification
         if (permission === "granted") {
           const notification = new Notification("Hi there!");
-          // …
         }
       });
     }
   };
-  if (Notification.permission === "granted") {
-    console.log("allow");
-    return true;
-  }
-  if (!Notification.requestPermission()) {
-    return true;
-  }
-  Notification.requestPermission().then(function (result) {
-    if (result === "denied") {
-      console.log("denied", result);
-      return;
-    }
-    if (result === "granted") {
-      console.log("allow", result);
-    }
-  });
+
   getToken(messaging, {
     vapidKey:
       "BNiYast8NllLtbCmjB7tEy1Ja95lcKdr0_Unmz41P96-c5OHtqq1L60fhrlOGY2hW3RQDNdoVoF5MwLHUg2UlnQ",
