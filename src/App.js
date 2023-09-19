@@ -37,22 +37,15 @@ function notifyMe() {
   }
 }
 const messaging = getMessaging();
-function App() {
+async function App() {
   notifyMe();
   const [token, setToken] = useState("");
-  try {
-    Notification.requestPermission().then(() => doSomething());
-  } catch (error) {
-    // Safari doesn't return a promise for requestPermissions and it
-    // throws a TypeError. It takes a callback as the first argument
-    // instead.
-    if (error instanceof TypeError) {
-      Notification.requestPermission(() => {
-        doSomething();
-      });
-    } else {
-      throw error;
-    }
+
+  let permission = await Notification.requestPermission();
+  if (permission === "granted") {
+    // Get the FCM token (see below)
+  } else {
+    // Handle denied permission
   }
   getToken(messaging, {
     vapidKey:
