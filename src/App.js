@@ -41,12 +41,22 @@ async function App() {
   notifyMe();
   const [token, setToken] = useState("");
 
-  let permission = await Notification.requestPermission();
-  if (permission === "granted") {
-    // Get the FCM token (see below)
-  } else {
-    // Handle denied permission
+  if (Notification.permission === "granted") {
+    console.log("allow", result);
+    return true;
   }
+  if (!Notification.requestPermission()) {
+    return true;
+  }
+  Notification.requestPermission().then(function (result) {
+    if (result === "denied") {
+      console.log("denied", result);
+      return;
+    }
+    if (result === "granted") {
+      console.log("allow", result);
+    }
+  });
   getToken(messaging, {
     vapidKey:
       "BNiYast8NllLtbCmjB7tEy1Ja95lcKdr0_Unmz41P96-c5OHtqq1L60fhrlOGY2hW3RQDNdoVoF5MwLHUg2UlnQ",
