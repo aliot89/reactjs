@@ -45,7 +45,6 @@ function notifyMe() {
 function App() {
   const [token, setToken] = useState("");
   notifyMe();
-  requestPermission();
   getToken(messaging, {
     vapidKey:
       "BNiYast8NllLtbCmjB7tEy1Ja95lcKdr0_Unmz41P96-c5OHtqq1L60fhrlOGY2hW3RQDNdoVoF5MwLHUg2UlnQ",
