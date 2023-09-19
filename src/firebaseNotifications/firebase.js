@@ -1,7 +1,6 @@
-import logo from "./logo.svg";
-import "./App.css";
-import Notification from "./firebaseNotifications/Notification";
-import { useState } from "react";
+// Firebase Cloud Messaging Configuration File.
+// Read more at https://firebase.google.com/docs/cloud-messaging/js/client && https://firebase.google.com/docs/cloud-messaging/js/receive
+
 import { initializeApp } from "firebase/app";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 
@@ -18,9 +17,9 @@ var firebaseConfig = {
 initializeApp(firebaseConfig);
 
 const messaging = getMessaging();
-function App() {
-  const [token, setToken] = useState("");
-  getToken(messaging, {
+
+export const requestForToken = () => {
+  return getToken(messaging, {
     vapidKey:
       "BNiYast8NllLtbCmjB7tEy1Ja95lcKdr0_Unmz41P96-c5OHtqq1L60fhrlOGY2hW3RQDNdoVoF5MwLHUg2UlnQ",
   })
@@ -28,7 +27,6 @@ function App() {
       if (currentToken) {
         console.log("current token for client: ", currentToken);
         // Perform any other neccessary action with the token
-        setToken(currentToken);
         return currentToken;
       } else {
         // Show permission request UI
@@ -40,25 +38,14 @@ function App() {
     .catch((err) => {
       console.log("An error occurred while retrieving token. ", err);
     });
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href={token}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {token}
-        </a>
-      </header>
-      <Notification />
-    </div>
-  );
-}
+};
 
-export default App;
+// Handle incoming messages. Called when:
+// - a message is received while the app has focus
+// - the user clicks on an app notification created by a service worker `messaging.onBackgroundMessage` handler.
+export const onMessageListener = () =>
+  new Promise((resolve) => {
+    onMessage(messaging, (payload) => {
+      resolve(payload);
+    });
+  });
