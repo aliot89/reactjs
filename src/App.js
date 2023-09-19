@@ -93,7 +93,7 @@ async function App() {
         </a>
       </header>
       <Notification />
-      <button onClick={notifyMe()}>Get permission</button>
+      <button onClick={() => this.notifyMe()}>Click me</button>{" "}
     </div>
   );
 }
