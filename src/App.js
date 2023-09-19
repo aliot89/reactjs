@@ -18,6 +18,15 @@ var firebaseConfig = {
 initializeApp(firebaseConfig);
 
 const messaging = getMessaging();
+async function requestPermisson() {
+  let permission = await window.Notification.requestPermission();
+  if (permission === "granted") {
+    alert("Notification permission granted. Requesting for token.");
+  } else {
+    alert("Notification permission denied");
+    // Handle denied permission
+  }
+}
 function App() {
   const [token, setToken] = useState("");
   getToken(messaging, {
@@ -57,6 +66,7 @@ function App() {
         </a>
       </header>
       <Notification />
+      <button onClick={requestPermisson}>tesst</button>
     </div>
   );
 }
