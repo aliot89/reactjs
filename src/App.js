@@ -18,18 +18,22 @@ var firebaseConfig = {
 initializeApp(firebaseConfig);
 
 const messaging = getMessaging();
-// Outer function to prevent scope pollution
-
-async function App() {
+function App() {
   const [token, setToken] = useState("");
-  Notification.requestPermission((result) => {
-    console.log(result);
-    if (result === "granted") {
-      alert("Permissions granted");
+  try {
+    Notification.requestPermission().then(() => doSomething());
+  } catch (error) {
+    // Safari doesn't return a promise for requestPermissions and it
+    // throws a TypeError. It takes a callback as the first argument
+    // instead.
+    if (error instanceof TypeError) {
+      Notification.requestPermission(() => {
+        doSomething();
+      });
     } else {
-      alert("Permissions denied");
+      throw error;
     }
-  });
+  }
   getToken(messaging, {
     vapidKey:
       "BNiYast8NllLtbCmjB7tEy1Ja95lcKdr0_Unmz41P96-c5OHtqq1L60fhrlOGY2hW3RQDNdoVoF5MwLHUg2UlnQ",
