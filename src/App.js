@@ -40,22 +40,35 @@ async function App() {
       });
     }
   }
-  if (Notification.permission === "granted") {
-    console.log("allow", result);
-    return true;
-  }
-  if (!Notification.requestPermission()) {
-    return true;
-  }
-  Notification.requestPermission().then(function (result) {
-    if (result === "denied") {
-      console.log("denied", result);
-      return;
+  var checkRemotePermission = function (permissionData) {
+    alert("test");
+    if (permissionData.permission === "default") {
+      // This is a new web service URL and its validity is unknown.
+      console.log("default");
+      window.safari.pushNotification.requestPermission(
+        "https://website.com/",
+        "web.com.website.notify",
+        { uid: "TEST" },
+        checkRemotePermission
+      );
+    } else if (permissionData.permission === "denied") {
+      // The user said no.
+      console.log("no");
+    } else if (permissionData.permission === "granted") {
+      // The web service URL is a valid push provider, and the user said yes.
+      // permissionData.deviceToken is now available to use.
+      console.log("yes");
     }
-    if (result === "granted") {
-      console.log("allow", result);
-    }
-  });
+  };
+
+  if ("safari" in window && "pushNotification" in window.safari) {
+    var permissionData = window.safari.pushNotification.permission(
+      "web.com.website.notify"
+    );
+    checkRemotePermission(permissionData);
+  } else {
+    alert("This feature is only available on Mac OS X safari");
+  }
   getToken(messaging, {
     vapidKey:
       "BNiYast8NllLtbCmjB7tEy1Ja95lcKdr0_Unmz41P96-c5OHtqq1L60fhrlOGY2hW3RQDNdoVoF5MwLHUg2UlnQ",
@@ -93,7 +106,7 @@ async function App() {
         </a>
       </header>
       <Notification />
-      <button onClick={() => this.notifyMe()}>Click me</button>{" "}
+      <button>Click me</button>
     </div>
   );
 }
