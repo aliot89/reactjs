@@ -18,41 +18,33 @@ var firebaseConfig = {
 initializeApp(firebaseConfig);
 
 const messaging = getMessaging();
-function requestPermission() {
-  console.log("request permission");
 
-  Notification.requestPermission().then((permission) => {
-    if (permission === "granted") {
-      console.log("FIREBASE CLOUD MESSAGING Notification permission granted.");
+function notifyMe() {
+  if (!("Notification" in window)) {
+    // Check if the browser supports notifications
+    alert("This browser does not support desktop notification");
+  } else if (Notification.permission === "granted") {
+    // Check whether notification permissions have already been granted;
+    // if so, create a notification
+    const notification = new Notification("Hi there!");
+    // …
+  } else if (Notification.permission !== "denied") {
+    // We need to ask the user for permission
+    Notification.requestPermission().then((permission) => {
+      // If the user accepts, let's create a notification
+      if (permission === "granted") {
+        const notification = new Notification("Hi there!");
+        // …
+      }
+    });
+  }
 
-      messaging
-        .getToken(messaging, { vapidKey: "<my-key>" })
-        .then((currentToken) => {
-          if (currentToken) {
-            // Send the token to your server and update the UI if necessary
-            // ...
-            console.log("FIREBASE CLOUD MESSAGING currentToken", currentToken);
-          } else {
-            // Show permission request UI
-            console.log(
-              "FIREBASE CLOUD MESSAGING No registration token available. Request permission to generate one."
-            );
-            // ...
-          }
-        })
-        .catch((err) => {
-          console.log(
-            "FIREBASE CLOUD MESSAGING An error occurred while retrieving token. ",
-            err
-          );
-          // ...
-        });
-    }
-  });
+  // At last, if the user has denied notifications, and you
+  // want to be respectful there is no need to bother them anymore.
 }
-
 function App() {
   const [token, setToken] = useState("");
+  notifyMe();
   requestPermission();
   getToken(messaging, {
     vapidKey:
