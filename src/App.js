@@ -18,6 +18,27 @@ var firebaseConfig = {
 initializeApp(firebaseConfig);
 
 const messaging = getMessaging();
+// Outer function to prevent scope pollution
+(function () {
+  function thingThatINeed() {}
+  // Flag to keep track of whether it is called.
+  var isCalled = false;
+  function conditionalCall() {
+    if (!isCalled) {
+      // if the conditionalCall function is called more than once, the
+      // needed function will still only be called once.
+      thingThatINeed();
+      isCalled = true;
+    }
+  }
+  // Call requestPermission with the deprecated form
+  var promise = Notification.requestPermission(conditionalCall);
+
+  // if a promise is returned, then use the promise.
+  if (promise) {
+    promise.then(conditionalCall);
+  }
+})();
 async function App() {
   const [token, setToken] = useState("");
 
@@ -41,35 +62,6 @@ async function App() {
     .catch((err) => {
       console.log("An error occurred while retrieving token. ", err);
     });
-
-  var p = document.getElementById("foo");
-  p.onclick = function () {
-    // Ensure that the user can receive Safari Push Notifications.
-    if ("safari" in window && "pushNotification" in window.safari) {
-      var permissionData = window.safari.pushNotification.permission(
-        "web.com.example.domain"
-      );
-      checkRemotePermission(permissionData);
-    }
-  };
-
-  var checkRemotePermission = function (permissionData) {
-    if (permissionData.permission === "default") {
-      // This is a new web service URL and its validity is unknown.
-      window.safari.pushNotification.requestPermission(
-        "https://reactjs-blond-beta.vercel.app/", // The web service URL.
-        "reactjs-blond-beta.vercel.app", // The Website Push ID.
-        {}, // Data that you choose to send to your server to help you identify the user.
-        checkRemotePermission // The callback function.
-      );
-    } else if (permissionData.permission === "denied") {
-      // The user said no.
-    } else if (permissionData.permission === "granted") {
-      // The web service URL is a valid push provider, and the user said yes.
-      // permissionData.deviceToken is now available to use.
-    }
-  };
-
   return (
     <div className="App">
       <header className="App-header">
@@ -77,7 +69,6 @@ async function App() {
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
-        <h3 id="foo"></h3>
         <a
           className="App-link"
           href={token}
