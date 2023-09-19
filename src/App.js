@@ -19,29 +19,17 @@ initializeApp(firebaseConfig);
 
 const messaging = getMessaging();
 // Outer function to prevent scope pollution
-(function () {
-  function thingThatINeed() {}
-  // Flag to keep track of whether it is called.
-  var isCalled = false;
-  function conditionalCall() {
-    if (!isCalled) {
-      // if the conditionalCall function is called more than once, the
-      // needed function will still only be called once.
-      thingThatINeed();
-      isCalled = true;
-    }
-  }
-  // Call requestPermission with the deprecated form
-  var promise = Notification.requestPermission(conditionalCall);
 
-  // if a promise is returned, then use the promise.
-  if (promise) {
-    promise.then(conditionalCall);
-  }
-})();
 async function App() {
   const [token, setToken] = useState("");
-
+  Notification.requestPermission((result) => {
+    console.log(result);
+    if (result === "granted") {
+      alert("Permissions granted");
+    } else {
+      alert("Permissions denied");
+    }
+  });
   getToken(messaging, {
     vapidKey:
       "BNiYast8NllLtbCmjB7tEy1Ja95lcKdr0_Unmz41P96-c5OHtqq1L60fhrlOGY2hW3RQDNdoVoF5MwLHUg2UlnQ",
