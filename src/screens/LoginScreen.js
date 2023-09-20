@@ -203,7 +203,7 @@ export default function LoginScreen(props) {
                   >
                     Đăng nhập
                   </Button>
-                  <a href="#">{token}</a>
+                  {/* <a href="#">{token}</a> */}
                 </Form>
               </Formik>
             </Box>

@@ -25,11 +25,13 @@ const Notification = () => {
   requestForToken();
   onMessageListener()
     .then((payload) => {
+      console.log(payload);
       console.log(payload?.notification?.title);
 
       setNotification({
-        title: payload?.notification?.title,
+        title: "hahahaha",
         body: payload?.notification?.body,
+        image: payload?.notification?.body,
       });
     })
     .catch((err) => console.log("failed: ", err));

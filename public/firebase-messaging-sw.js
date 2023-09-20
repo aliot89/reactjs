@@ -12,11 +12,12 @@ const defaultConfig = {
   projectId: true,
   messagingSenderId: true,
   appId: true,
-  image: "./logo192.png",
+  image: true,
 };
 
-firebase.initializeApp(self.firebaseConfig || defaultConfig);
+firebase.initializeApp(defaultConfig);
 if (firebase.messaging.isSupported()) {
+  console.log(Date());
   const messaging = firebase.messaging();
   const channel = new BroadcastChannel("notifications");
   messaging.onBackgroundMessage(function (payload) {
