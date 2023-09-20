@@ -92,7 +92,7 @@ export default function LoginScreen(props) {
   const handleSubmit = async (values, { setSubmitting }) => {
     // console.log("form");
     try {
-      const response = await fetch("http://192.168.18.172:8080/auth/login", {
+      const response = await fetch("https://dare.serveo.net/auth/login", {
         method: "POST", // or 'PUT'
         headers: {
           "Content-Type": "application/json",
